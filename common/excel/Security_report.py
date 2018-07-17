@@ -128,7 +128,6 @@ def create_ownreport(areaname,result_s):
             work_sheets.write('N21', '个人缴存金额', cell_format_bc)
             work_sheets.write('O21', '缴存月数', cell_format_bc)
             work_sheets.write('P21', '---', cell_format_bc)
-            work_sheets.freeze_panes(21, 0)
             for bills_len in range(len(bills)):
                 bill_2014  = bill_2014+1
                 work_sheets.write(21 + bills_len, 2, bills[bills_len]["base_number"], cell_format_bv)
@@ -171,7 +170,6 @@ def create_ownreport(areaname,result_s):
             work_sheets.write('N'+str(22+bill_2014 ), '缴存月份', cell_format_bc)
             work_sheets.write('O'+str(22+bill_2014 ), '缴存月份(end)', cell_format_bc)
             work_sheets.write('P'+str(22+bill_2014 ), '缴存状态标记', cell_format_bc)
-            work_sheets.freeze_panes(22+bill_2014, 0)
             for repay_v in range(len(insurance_record_v)):
                 repay_num = repay_num+1
                 work_sheets.write(22 + bill_2014 + repay_v, 2, insurance_record_v[repay_v]["amount"], cell_format_bv)
@@ -194,7 +192,7 @@ def create_ownreport(areaname,result_s):
         #医保消费信息
         work_sheets.merge_range('C' + str(22 + bill_2014+repay_num) + ':P' + str(22 + bill_2014+repay_num), '医保消费信息', merge_format_b)
         medical_insurance_record_v = result_s["data"]["medical_insurance_record"]
-        medical_num = 1
+        medical_num = 0
         if len(medical_insurance_record_v) == 0:
             work_sheets.write(22 + bill_2014+repay_num, 2, '没有医保消费信息', cell_format_bv)
         else:
@@ -202,13 +200,12 @@ def create_ownreport(areaname,result_s):
             work_sheets.merge_range('F' + str(23 + bill_2014+repay_num) + ':H' + str(23 + bill_2014+repay_num), '医疗机构类别', cell_format_bc)
             work_sheets.merge_range('I' + str(23 + bill_2014+repay_num) + ':K' + str(23 + bill_2014+repay_num), '医保结算时间', cell_format_bc)
             work_sheets.merge_range('L' + str(23 + bill_2014+repay_num) + ':P' + str(23 + bill_2014+repay_num), '结算金额', cell_format_bc)
-            work_sheets.freeze_panes(23 + bill_2014+repay_num, 0)
             for medical_v in range(len(medical_insurance_record_v)):
+                work_sheets.merge_range('C' + str(24 + bill_2014 + repay_num+medical_v) + ':E' + str(24 + bill_2014 + repay_num+medical_v),medical_insurance_record_v[medical_v]['organization_name'], cell_format_bv)
+                work_sheets.merge_range('F' + str(24 + bill_2014 + repay_num+medical_v) + ':H' + str(24 + bill_2014 + repay_num+medical_v),medical_insurance_record_v[medical_v]['type'], cell_format_bv)
+                work_sheets.merge_range('I' + str(24 + bill_2014 + repay_num+medical_v) + ':K' + str(24 + bill_2014 + repay_num+medical_v),medical_insurance_record_v[medical_v]['settlemen_time'], cell_format_bv)
+                work_sheets.merge_range('L' + str(24 + bill_2014 + repay_num+medical_v) + ':P' + str(24 + bill_2014 + repay_num+medical_v),medical_insurance_record_v[medical_v]['money'], cell_format_bv)
                 medical_num = medical_num + 1
-                work_sheets.merge_range('C' + str(24 + bill_2014 + repay_num) + ':E' + str(24 + bill_2014 + repay_num),medical_insurance_record_v[medical_v]['organization_name'], cell_format_bv)
-                work_sheets.merge_range('F' + str(24 + bill_2014 + repay_num) + ':H' + str(24 + bill_2014 + repay_num),medical_insurance_record_v[medical_v]['type'], cell_format_bv)
-                work_sheets.merge_range('I' + str(24 + bill_2014 + repay_num) + ':K' + str(24 + bill_2014 + repay_num),medical_insurance_record_v[medical_v]['settlemen_time'], cell_format_bv)
-                work_sheets.merge_range('L' + str(24 + bill_2014 + repay_num) + ':P' + str(24 + bill_2014 + repay_num),medical_insurance_record_v[medical_v]['money'], cell_format_bv)
 
         print("个人报告生成成功............")
 
@@ -216,13 +213,13 @@ def create_ownreport(areaname,result_s):
     else:
         print(".....没有记录....")
 
-    for ls in range(23 + bill_2014 + repay_num + medical_num):
+    for ls in range(24 + bill_2014 + repay_num + medical_num):
         work_sheets.write('B' + str(ls + 2), '', border_l)
         work_sheets.write('R' + str(ls + 2), '', border_l)
 
     for ts in range(16):
         work_sheets.write(1, ts + 1, '', border_t)
-        work_sheets.write(24 + bill_2014 + repay_num + medical_num, ts + 1, '', border_t)
+        work_sheets.write(25 + bill_2014 + repay_num + medical_num, ts + 1, '', border_t)
 
         work_sheets.write('B2', '', border_h2)
 
