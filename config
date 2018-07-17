@@ -1,0 +1,15 @@
+[ADDRESS]
+table = D:\DevCode\data\radar\Table.csv
+table_re = D:\DevCode\data\radar\Table_result.txt
+
+member = D:\DevCode\data\Member.csv
+member_re = D:\DevCode\data\Member_result.txt
+
+
+auto = D:\DevCode\data\Auto.xlsx
+
+CASE = D:\DevCode\data\spider\Test_case.xlsx
+
+
+hbase = D:\DevCode\data\Hbase.csv
+hbase_re = D:\DevCode\data\Hbase_result.txt
