@@ -216,13 +216,13 @@ def create_ownreport(areaname,result_s):
     else:
         print(".....没有记录....")
 
-    for ls in range(23 + bill_2014 + repay_num + medical_num):
+    for ls in range(24 + bill_2014 + repay_num + medical_num):
         work_sheets.write('B' + str(ls + 2), '', border_l)
         work_sheets.write('R' + str(ls + 2), '', border_l)
 
     for ts in range(16):
         work_sheets.write(1, ts + 1, '', border_t)
-        work_sheets.write(24 + bill_2014 + repay_num + medical_num, ts + 1, '', border_t)
+        work_sheets.write(25 + bill_2014 + repay_num + medical_num, ts + 1, '', border_t)
 
         work_sheets.write('B2', '', border_h2)
 
