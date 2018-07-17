@@ -173,6 +173,11 @@ for rown in range(data_sheet.nrows-1):
                 report_x(rownum1, ID_v, DESCRIBE_v, CASE_ID_v, Case_type_v, URI_NAME_v, ENV_v,'',verify,consu,errorMsg_v,str(area_code_rows[1]["errorMsg"]))
 
 
+
+
+
+
+
             elif rows[URI_NAME] == '根据 areaCode 获取公积金登录信息':
                 Logintype= Get_Logindata(env,memberId_v,terminalId_v,area_code_v)
                 consu = Logintype[2]
