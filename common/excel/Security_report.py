@@ -204,11 +204,11 @@ def create_ownreport(areaname,result_s):
             work_sheets.merge_range('L' + str(23 + bill_2014+repay_num) + ':P' + str(23 + bill_2014+repay_num), '结算金额', cell_format_bc)
             work_sheets.freeze_panes(23 + bill_2014+repay_num, 0)
             for medical_v in range(len(medical_insurance_record_v)):
+                work_sheets.merge_range('C' + str(24 + bill_2014 + repay_num+medical_v) + ':E' + str(24 + bill_2014 + repay_num+medical_v),medical_insurance_record_v[medical_v]['organization_name'], cell_format_bv)
+                work_sheets.merge_range('F' + str(24 + bill_2014 + repay_num+medical_v) + ':H' + str(24 + bill_2014 + repay_num+medical_v),medical_insurance_record_v[medical_v]['type'], cell_format_bv)
+                work_sheets.merge_range('I' + str(24 + bill_2014 + repay_num+medical_v) + ':K' + str(24 + bill_2014 + repay_num+medical_v),medical_insurance_record_v[medical_v]['settlemen_time'], cell_format_bv)
+                work_sheets.merge_range('L' + str(24 + bill_2014 + repay_num+medical_v) + ':P' + str(24 + bill_2014 + repay_num+medical_v),medical_insurance_record_v[medical_v]['money'], cell_format_bv)
                 medical_num = medical_num + 1
-                work_sheets.merge_range('C' + str(24 + bill_2014 + repay_num) + ':E' + str(24 + bill_2014 + repay_num),medical_insurance_record_v[medical_v]['organization_name'], cell_format_bv)
-                work_sheets.merge_range('F' + str(24 + bill_2014 + repay_num) + ':H' + str(24 + bill_2014 + repay_num),medical_insurance_record_v[medical_v]['type'], cell_format_bv)
-                work_sheets.merge_range('I' + str(24 + bill_2014 + repay_num) + ':K' + str(24 + bill_2014 + repay_num),medical_insurance_record_v[medical_v]['settlemen_time'], cell_format_bv)
-                work_sheets.merge_range('L' + str(24 + bill_2014 + repay_num) + ':P' + str(24 + bill_2014 + repay_num),medical_insurance_record_v[medical_v]['money'], cell_format_bv)
 
         print("个人报告生成成功............")
 
