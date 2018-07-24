@@ -2,13 +2,14 @@ import datetime
 import random
 #随机生成请求号
 def ranreq():
-    req = 'req'+str(datetime.datetime.now()).replace('-','').replace(' ','').replace(':','').replace('.','')
+    req = 'req'+str(datetime.datetime.now()).replace('-','').replace(' ','').replace(':','').replace('.','')+str(random.randint(10,99))
     return req
 
 #生成交易日期函数：15位，年月日时分秒
 def tradedate():
     d = str(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
     return d
+
 
 #随机生成member_transid
 def membertrans():

@@ -4,7 +4,6 @@ from common.Rsa.EncryptData import getEncryptData
 import json
 import xlrd
 import urllib3
-import time
 import xlsxwriter
 
 path = 'D:\DevCode\data\spider\Excutor1.xlsx'

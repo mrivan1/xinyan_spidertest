@@ -17,7 +17,6 @@ def readExcelDataByName(fileName, sheetName):
     try:
         data = xlrd.open_workbook(fileName)
         table = data.sheet_by_name(sheetName)
-        data.close()
     except Exception as msg:
         errorMsg = msg
 
@@ -30,7 +29,6 @@ def readExcelDataByIndex(fileName, sheetIndex):
     try:
         data = xlrd.open_workbook(fileName)
         table = data.sheet_by_index(sheetIndex)
-        data.close()
     except Exception as msg:
         errorMsg = msg
     return table, errorMsg

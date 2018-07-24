@@ -23,7 +23,7 @@ def report(rownum,ID,DESCRIBE,CASE_ID,ENV,tradeno,area,userinfo,result,err):
 
 
 #创建公积金个人报告
-def create_ownreport(areaname,result_s):
+def create_ownreport(areaname,result_s,URL,LOG_INFO):
     print("生成个人报告中............")
     if result_s !='':
         work_sheets = workbook.add_worksheet(areaname + '报告详情')
@@ -44,6 +44,10 @@ def create_ownreport(areaname,result_s):
         work_sheets.merge_range('I7:K7', str(result_s["data"]["area_code"]), cell_format_bv)
         work_sheets.merge_range('L7:M7', '所属城市名称：', cell_format_bc)
         work_sheets.merge_range('N7:P7', str(result_s["data"]["city"]), cell_format_bv)
+        work_sheets.merge_range('C8:D8', '官网地址：', cell_format_bc)
+        work_sheets.merge_range('E8:F8', URL, cell_format_bv)
+        work_sheets.merge_range('G8:H8', '登录信息：', cell_format_bc)
+        work_sheets.merge_range('I8:P8', LOG_INFO, cell_format_bv)
         #基本信息
         work_sheets.merge_range('C9:P9', '基本信息', merge_format_b)
         userinfo = result_s["data"]["base_info"]

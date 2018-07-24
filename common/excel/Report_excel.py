@@ -36,7 +36,7 @@ def report_x(rownum,ID,DESCRIBE,CASE_ID,Case_type,URI_NAME,ENV,Trade_no,verify,c
     work_sheet2.write_number(rownum, 8,float(row1[8]))
 
 #创建公积金个人报告
-def create_ownreport(areaname,ID_v,trande_no,result_s):
+def create_ownreport(areaname,ID_v,trande_no,result_s,url_gjj,loan_info):
     print("生成个人报告中............")
     if result_s !='':
         work_sheets = workbook.add_worksheet(areaname+ID_v + '报告详情')
@@ -53,6 +53,11 @@ def create_ownreport(areaname,ID_v,trande_no,result_s):
         work_sheets.merge_range('C3:O6', '公积金个人报告', merge_format_t)
         work_sheets.merge_range('C7:D7', '新颜订单号：', cell_format_bc)
         work_sheets.merge_range('E7:G7', str(trande_no), cell_format_bv)
+        work_sheets.merge_range('H7:I7', '官网网址：', cell_format_bc)
+        work_sheets.merge_range('J7:O7',url_gjj , cell_format_bv)
+        work_sheets.merge_range('C8:D8', '登录信息：', cell_format_bc)
+        work_sheets.merge_range('E8:O8',loan_info , cell_format_bv)
+
         #基本信息
         work_sheets.merge_range('C9:O9', '基本信息', merge_format_b)
         userinfo = result_s["data"]["user_info"]
@@ -457,5 +462,4 @@ def reports(total,row):
     print("报告生成成功......")
 
 def close_workbook():
-    # 关闭文件
     workbook.close()
