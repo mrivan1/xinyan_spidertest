@@ -133,7 +133,8 @@ def house_fund():
                             while status["data"]["phase"] != 'DONE':
                                 time.sleep(1)
                                 status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
-                                if status["errorCode"] == 2018:
+                                if '验证码' in status["data"]["description"] :
+                                    print("验证码错误，正在重试")
                                     trade_no_h = task_create(env, member_id_v, terminal_id_v, key_pfx_v, key_password_v,
                                                              notify_url_v, '1',
                                                              areacode[0], account_v, password_v, login_type_v,
