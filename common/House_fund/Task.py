@@ -27,9 +27,7 @@ def task_create(env,member_id,terminal_id,key_pfx,key_password,notify_url,user_i
                }
 
     print("创建任务中,请求参数为："+str(content))
-    print("报文加密中......................")
     content_rsa = getEncryptData(key_pfx,key_password,content).replace('"','')
-    print("报文加密成功......................")
 
     url =env + '/gateway-data/fund/v1/task/create'
     data  =  {'member_id': member_id,'terminal_id': terminal_id,'data_content': content_rsa}
