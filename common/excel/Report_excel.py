@@ -9,7 +9,7 @@ workbook = xlsxwriter.Workbook('D:/DevCode/data/spider/report/Housefound/'+filen
 
 # 创建sheet
 work_sheet1 = workbook.add_worksheet('公积金-报告')
-work_sheet = workbook.add_worksheet('公积金-回归')
+work_sheet = workbook.add_worksheet('公积金回归明细')
 work_sheet2 = workbook.add_worksheet('公积金-案例详情')
 
 # 结果包含的信息
@@ -28,6 +28,10 @@ def report(rownum,ID,DESCRIBE,CASE_ID,Case_type,URI_NAME,ENV,area,Trade_no,resul
     for k in range(len(row1)):
         work_sheet.write(rownum, k, str(row1[k]))
     work_sheet.write_number(rownum ,18,float(row1[18]))
+    if verify == 'Pass':
+        work_sheet.write_url(rownum ,20, url = 'internal:'+str(area)+str(ID)+'报告详情!A1',string='报告详情')
+    else:
+        pass
 
 def report_x(rownum,ID,DESCRIBE,CASE_ID,Case_type,URI_NAME,ENV,Trade_no,verify,consu,expect,actual):
     row1 = [ID,DESCRIBE,CASE_ID,Case_type,URI_NAME,ENV,Trade_no,verify,consu,expect,actual]
@@ -36,7 +40,7 @@ def report_x(rownum,ID,DESCRIBE,CASE_ID,Case_type,URI_NAME,ENV,Trade_no,verify,c
     work_sheet2.write_number(rownum, 8,float(row1[8]))
 
 #创建公积金个人报告
-def create_ownreport(areaname,ID_v,trande_no,result_s,url_gjj,loan_info):
+def create_ownreport(areaname,ID_v,trande_no,result_s,url_gjj,loan_info,rownum):
     print("生成个人报告中............")
     if result_s !='':
         work_sheets = workbook.add_worksheet(areaname+ID_v + '报告详情')
@@ -50,6 +54,7 @@ def create_ownreport(areaname,ID_v,trande_no,result_s,url_gjj,loan_info):
         border_t = workbook.add_format({'top': 2})
         border_h2 = workbook.add_format({'top': 2, 'left': 2})
 
+        work_sheets.write_url('A1',url=  'internal:公积金回归明细!U'+str(rownum+1),string='明细页')
         work_sheets.merge_range('C3:O6', '公积金个人报告', merge_format_t)
         work_sheets.merge_range('C7:D7', '新颜订单号：', cell_format_bc)
         work_sheets.merge_range('E7:G7', str(trande_no), cell_format_bv)
@@ -326,13 +331,13 @@ def reports(total,row):
     work_sheet1.write('J17', '执行人', cell_format_b)
     work_sheet1.write_formula('K14', '=COUNTIF(\'公积金-案例详情\'!D2:D' + str(total) + ',"反案例")', cell_format_e)
     work_sheet1.write_formula('K13','=COUNTIF(\'公积金-案例详情\'!D2:D' + str(total) + ',"正案例")', cell_format)
-    work_sheet1.write_formula('K15', '=COUNTIF(\'公积金-回归\'!D2:D' + str(total) + ',"跑数据")', cell_format_b)
+    work_sheet1.write_formula('K15', '=COUNTIF(\'公积金回归明细\'!D2:D' + str(total) + ',"跑数据")', cell_format_b)
     work_sheet1.write('L13', '通过数', cell_format_b)
     work_sheet1.write('L14', '失败数', cell_format_e)
     work_sheet1.write('L15', '用例总数', cell_format_b)
-    work_sheet1.write_formula('M13', '=COUNTIF(\'公积金-回归\'!R2:R' + str(total) + ',"Pass")+COUNTIF(\'公积金-案例详情\'!H2:H' + str(total) + ',"Pass")', cell_format_b)
-    work_sheet1.write_formula('M14', '=COUNTIF(\'公积金-回归\'!R2:R' + str(total) + ',"Fail")+COUNTIF(\'公积金-案例详情\'!H2:H' + str(total) + ',"Fail")', cell_format_e)
-    work_sheet1.write_formula('M15', '=COUNTIF(\'公积金-回归\'!A2:A' + str(total) + ',"<>")+COUNTIF(\'公积金-案例详情\'!A2:A' + str(total) + ',"<>")', cell_format_b)
+    work_sheet1.write_formula('M13', '=COUNTIF(\'公积金回归明细\'!R2:R' + str(total) + ',"Pass")+COUNTIF(\'公积金-案例详情\'!H2:H' + str(total) + ',"Pass")', cell_format_b)
+    work_sheet1.write_formula('M14', '=COUNTIF(\'公积金回归明细\'!R2:R' + str(total) + ',"Fail")+COUNTIF(\'公积金-案例详情\'!H2:H' + str(total) + ',"Fail")', cell_format_e)
+    work_sheet1.write_formula('M15', '=COUNTIF(\'公积金回归明细\'!A2:A' + str(total) + ',"<>")+COUNTIF(\'公积金-案例详情\'!A2:A' + str(total) + ',"<>")', cell_format_b)
     work_sheet1.write_formula('N13', '=M13/M15', cell_format_b)
     work_sheet1.write_formula('N14', '=M14/M15', cell_format_e)
     work_sheet1.write_formula('N15', '=M15/M15', cell_format_b)
@@ -445,8 +450,8 @@ def reports(total,row):
     # 选择数据区域
     chart2.add_series({
         'name': '耗时（s）',
-        'categories': '=\'公积金-回归\'!$G$2:$G$'+str(row+1),
-        'values': '=\'公积金-回归\'!$S$2:$S$'+str(row+1),
+        'categories': '=\'公积金回归明细\'!$G$2:$G$'+str(row+1),
+        'values': '=\'公积金回归明细\'!$S$2:$S$'+str(row+1),
     })
 
     # 给图表命名

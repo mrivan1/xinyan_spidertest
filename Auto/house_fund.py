@@ -317,6 +317,7 @@ def house_fund():
                 out = 1
                 errorMsgs = trade_NO[ii]["errorMsgs"]
             else:
+                print("开始查询 %s 地区公积金....." % area_name_v)
                 status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
                 retry_times = 0
                 if status["errorMsg"] == None:
@@ -324,7 +325,7 @@ def house_fund():
                         time.sleep(5)
                         status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
                         errorMsgs = ''
-                        if '验证码' in status["data"]["description"] and retry_times < 3:
+                        if '验证码' in status["data"]["description"] or '官网' in status["data"]["description"]  and retry_times < 3:
                             retry_times = retry_times+1
                             print("验证码错误，正在重试")
                             trade_no_h = task_create(env, member_id_v, terminal_id_v, key_pfx_v, key_password_v,
@@ -367,11 +368,15 @@ def house_fund():
             report(rownum, ID_v, DESCRIBE_v, CASE_ID_v, Case_type_v, '', ENV_v, area_name_v, Trade_no, result,
                    bills_2014, bills_2015, bills_2016, bills_2017, bills_2018, userinfo, loaninfo, repayinfo, verify,
                    0, '')
-            create_ownreport(area_name_v, ID_v, Trade_no, result, url_gjj_v, load_info)
+            if result["errorCode"] == None:
+                create_ownreport(area_name_v, ID_v, Trade_no, result, url_gjj_v, load_info,rownum)
+            else:
+                pass
         else:
             verify = 'Fail'
             report(rownum, ID_v, DESCRIBE_v, CASE_ID_v, Case_type_v, URI_NAME_v, ENV_v, area_name_v, Trade_no, '', '', '',
                    '', '', '', '', '', '', verify, 0, errorMsgs)
+        print('%s 地区公积金查询完毕，开始查询下一个地区......' % area_name_v)
         time.sleep(4)
 
     print("执行完毕.......")
