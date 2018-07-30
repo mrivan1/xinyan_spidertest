@@ -60,7 +60,7 @@ def house_fund():
     for rown in range(data_sheet.nrows-1):
         rows = data_sheet.row_values(rown + 1)
 
-        #判断需要执行才进行以下操作
+        #判断需要执行（1）才进行以下操作
         if rows[IS_RUN] == 1:
 
             #获取环境变量信息
@@ -113,7 +113,7 @@ def house_fund():
             errorMsg_v = rows[errorMsg]
             url_gjj_v = rows[url_gjj]
 
-
+            #只有案例类型为跑数据的时候才进行全自动跑任务
             if Case_type_v =='跑数据':
                 rownum = rownum + 1
                 areacode = Get_Arealist(env,memberId_v,terminalId_v,area_name_v)
@@ -121,6 +121,7 @@ def house_fund():
                                        areacode[0], account_v, password_v, login_type_v, id_card_v, mobile_v, real_name_v,
                                        sub_area_v, corp_account_v, corp_name_v, '2', ip_v)
 
+                #讲创建的任务放入一个队列，任务全部创建完成后，在依次轮询队列里的任务，获取任务结果
                 Trade_no = trade_no_h[0]
 
                 trade_NO.append(
@@ -129,6 +130,10 @@ def house_fund():
                      "Case_type": Case_type_v, "area_name": area_name_v, "env": env, "ENV": ENV_v,
                       "account": account_v, "password": password_v,"login_type":login_type_v,'areacode':areacode[0],
                      "id_card": id_card_v, "mobile": mobile_v, "real_name": real_name_v,"errorMsgs":trade_no_h[4]})
+
+
+                #控制创建任务的频率
+                time.sleep(3)
 
 
                 # time_e = time.time()
@@ -290,7 +295,7 @@ def house_fund():
 
         else:
             continue
-
+    #轮询订单队列，依次获取订单信息
     for ii in range(len(trade_NO)):
         out = 0
         Trade_no = trade_NO[ii]["tradeno"]
@@ -325,6 +330,7 @@ def house_fund():
                         time.sleep(5)
                         status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
                         errorMsgs = ''
+                        #对返回错误类型为官网繁忙或者验证码错误的时候增加重试机制
                         if '验证码' in status["data"]["description"] or '官网' in status["data"]["description"]  and retry_times < 3:
                             retry_times = retry_times+1
                             print("验证码错误，正在重试")

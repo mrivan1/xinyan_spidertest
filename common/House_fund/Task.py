@@ -5,6 +5,7 @@ from common.rand import membertrans,tradedate
 import time
 import urllib3
 
+
 def task_create(env,member_id,terminal_id,key_pfx,key_password,notify_url,user_id,area_code,account,password,login_type,id_card,mobile,real_name,sub_area,corp_account,corp_name,origin,ip):
     content = {'member_id': member_id ,
                'terminal_id': terminal_id,
@@ -46,7 +47,6 @@ def task_create(env,member_id,terminal_id,key_pfx,key_password,notify_url,user_i
         err = response['errorMsg']
     return  tradeno,response,time_s,consu,err
 
-
-#trade_no_h = task_create('http://test.xinyan.com','8000013112','8000013112', '8000013112_pri.pfx', '217531', '', '1','212000', '321121198703033212', '198703', '1', '', '', '基军吉','', '', '', '2', '')
-
-#print(trade_no_h[1])
+if __name__ == '__main__':
+    trade_no_h = task_create('http://test.xinyan.com','8000013112','8000013112', '8000013112_pri.pfx', '217531', '', '1','524000', '440825198606250012', 'a.123456', '13', '', '', '','', '', '', '2', '')
+    print(trade_no_h[1])
