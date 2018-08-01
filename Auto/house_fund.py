@@ -133,7 +133,7 @@ def house_fund():
 
 
                 #控制创建任务的频率
-                time.sleep(3)
+                # time.sleep(3)
 
 
                 # time_e = time.time()
@@ -325,11 +325,13 @@ def house_fund():
                 print("开始查询 %s 地区公积金....." % area_name_v)
                 status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
                 retry_times = 0
+                try_times = 0
                 if status["errorMsg"] == None:
                     while status["data"]["phase"] != 'DONE':
                         time.sleep(5)
                         status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
                         errorMsgs = ''
+                        try_times = try_times + 1
                         #对返回错误类型为官网繁忙或者验证码错误的时候增加重试机制
                         if '验证码' in status["data"]["description"] or '官网' in status["data"]["description"]  and retry_times < 3:
                             retry_times = retry_times+1
@@ -352,6 +354,11 @@ def house_fund():
                             except:
                                 pass
                             out = 1
+                            break
+                        elif try_times > 40:
+                            print("任务超时")
+                            out = 1
+                            errorMsgs = "任务超时"
                             break
                 else:
                     errorMsgs = str(status['errorMsg'])
