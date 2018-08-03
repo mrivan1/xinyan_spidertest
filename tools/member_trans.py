@@ -33,3 +33,7 @@ print("解析结束")
 f.close()
 file.close()
 print("----------文件已生成------------")
+
+
+if __name__ == '__main__':
+    pass

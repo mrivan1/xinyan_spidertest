@@ -20,6 +20,9 @@ def Get_Arealist(env,memberId,terminalId,areaname):
         else:
             continue
 
+if __name__ == '__main__':
+    a = Get_Arealist("https://api.xinyan.com","1107602","32912","运城")
+    print(a[0])
 
 
 

@@ -2,8 +2,8 @@
 table = D:\DevCode\data\radar\Table.csv
 table_re = D:\DevCode\data\radar\Table_result.txt
 
-member = D:\DevCode\data\Member.csv
-member_re = D:\DevCode\data\Member_result.txt
+member = D:\DevCode\data\radar\Member.csv
+member_re = D:\DevCode\data\radar\Member_result.txt
 
 
 auto = D:\DevCode\data\Auto.xlsx

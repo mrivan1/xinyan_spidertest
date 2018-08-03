@@ -22,4 +22,6 @@ def Get_Logindata(env,memberId,terminalId,areacode):
     return logtype,response,consu
 
 
-
+if __name__ == '__main__':
+    b = Get_Logindata("https://api.xinyan.com","1107602","32912","044000")
+    b[0]

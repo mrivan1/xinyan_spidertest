@@ -14,6 +14,9 @@ import xlrd
 import time
 
 def house_fund():
+    #设置参数
+    iterations = 30  #迭代轮数
+    sleep_time = 30 #创建任务后的休眠时间，若任务较少则可以讲此数据调至100左右，若任务较多则调至20-30即可
     localRead = readconfig.ReadConfig()
     path = localRead.get_address('CASE')
 
@@ -129,7 +132,7 @@ def house_fund():
                      "tradeno": Trade_no, "ID": ID_v, "DESCRIBE": DESCRIBE_v, "CASE_ID": CASE_ID_v,
                      "Case_type": Case_type_v, "area_name": area_name_v, "env": env, "ENV": ENV_v,
                       "account": account_v, "password": password_v,"login_type":login_type_v,'areacode':areacode[0],
-                     "id_card": id_card_v, "mobile": mobile_v, "real_name": real_name_v,"errorMsgs":trade_no_h[4]})
+                     "id_card": id_card_v, "mobile": mobile_v, "real_name": real_name_v,"errorMsgs":trade_no_h[4],"corp_account":corp_account_v,"corp_name":corp_name_v})
 
 
                 #控制创建任务的频率
@@ -296,101 +299,129 @@ def house_fund():
         else:
             continue
     #轮询订单队列，依次获取订单信息
-    for ii in range(len(trade_NO)):
-        out = 0
-        Trade_no = trade_NO[ii]["tradeno"]
-        account_v = trade_NO[ii]["account"]
-        password_v = trade_NO[ii]["password"]
-        id_card_v = trade_NO[ii]["id_card"]
-        mobile_v = trade_NO[ii]["mobile"]
-        real_name_v = trade_NO[ii]["real_name"]
-        env = trade_NO[ii]["env"]
-        memberId_v = trade_NO[ii]["memberId"]
-        terminalId_v = trade_NO[ii]["terminalId"]
-        rownum = trade_NO[ii]["rownum"]
-        ID_v = trade_NO[ii]["ID"]
-        DESCRIBE_v = trade_NO[ii]["DESCRIBE"]
-        CASE_ID_v = trade_NO[ii]["CASE_ID"]
-        Case_type_v = trade_NO[ii]["Case_type"]
-        ENV_v = trade_NO[ii]["ENV"]
-        area_name_v = trade_NO[ii]["area_name"]
-        url_gjj_v = trade_NO[ii]["url_gjj"]
-        login_type_v = trade_NO[ii]["login_type"]
-        areacode = trade_NO[ii]["areacode"]
-        try:
-            if Trade_no == '999':
-                out = 1
-                errorMsgs = trade_NO[ii]["errorMsgs"]
-            else:
-                print("开始查询 %s 地区公积金....." % area_name_v)
-                status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
-                retry_times = 0
-                try_times = 0
-                if status["errorMsg"] == None:
-                    while status["data"]["phase"] != 'DONE':
-                        time.sleep(5)
-                        status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
-                        errorMsgs = ''
-                        try_times = try_times + 1
-                        #对返回错误类型为官网繁忙或者验证码错误的时候增加重试机制
-                        if '验证码' in status["data"]["description"] or '官网' in status["data"]["description"]  and retry_times < 3:
-                            retry_times = retry_times+1
-                            print("验证码错误，正在重试")
-                            trade_no_h = task_create(env, member_id_v, terminal_id_v, key_pfx_v, key_password_v,
-                                                     '', '1',
-                                                     areacode, account_v, password_v, login_type_v,
-                                                     id_card_v, mobile_v, real_name_v,
-                                                     '', '', '', '2', '')
-                            Trade_no = trade_no_h[0]
-                            trade_NO[ii]["tradeno"] = Trade_no
-                            status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
-                        elif status["errorCode"] != None:
-                            errorMsgs = str(status['errorMsg'])
-                            out = 1
-                            break
-                        elif status["data"]["phase_status"] == 'DONE_FAIL':
-                            try:
-                                errorMsgs = str(status["data"]["description"])
-                            except:
-                                pass
-                            out = 1
-                            break
-                        elif try_times > 40:
-                            print("任务超时")
-                            out = 1
-                            errorMsgs = "任务超时"
-                            break
-                else:
-                    errorMsgs = str(status['errorMsg'])
-                    out = 1
-        except:
-            pass
 
-        if out == 0:
-            load_info = account_v + ',' + password_v + ',' + id_card_v + mobile_v + ',' + real_name_v
-            result = get_result(env, memberId_v, terminalId_v, Trade_no)[0]
-            bills_2014 = get_bills(env, memberId_v, terminalId_v, Trade_no, '2014', '1', '20')[0]
-            bills_2015 = get_bills(env, memberId_v, terminalId_v, Trade_no, '2015', '1', '20')[0]
-            bills_2016 = get_bills(env, memberId_v, terminalId_v, Trade_no, '2016', '1', '20')[0]
-            bills_2017 = get_bills(env, memberId_v, terminalId_v, Trade_no, '2017', '1', '20')[0]
-            bills_2018 = get_bills(env, memberId_v, terminalId_v, Trade_no, '2018', '1', '20')[0]
-            userinfo = get_user(env, memberId_v, terminalId_v, Trade_no)[0]
-            loaninfo = get_loan(env, memberId_v, terminalId_v, Trade_no)[0]
-            repayinfo = get_repay(env, memberId_v, terminalId_v, Trade_no)[0]
-            verify = 'Pass'
-            report(rownum, ID_v, DESCRIBE_v, CASE_ID_v, Case_type_v, '', ENV_v, area_name_v, Trade_no, result,
-                   bills_2014, bills_2015, bills_2016, bills_2017, bills_2018, userinfo, loaninfo, repayinfo, verify,
-                   0, '')
-            if result["errorCode"] == None:
-                create_ownreport(area_name_v, ID_v, Trade_no, result, url_gjj_v, load_info,rownum)
+    time.sleep(sleep_time)
+    def get_results(trade_NO,trade_NO_re):
+        for ii in range(len(trade_NO)):
+            out = 0
+            Trade_no = trade_NO[ii]["tradeno"]
+            account_v = trade_NO[ii]["account"]
+            password_v = trade_NO[ii]["password"]
+            id_card_v = trade_NO[ii]["id_card"]
+            mobile_v = trade_NO[ii]["mobile"]
+            real_name_v = trade_NO[ii]["real_name"]
+            env = trade_NO[ii]["env"]
+            memberId_v = trade_NO[ii]["memberId"]
+            terminalId_v = trade_NO[ii]["terminalId"]
+            rownum = trade_NO[ii]["rownum"]
+            ID_v = trade_NO[ii]["ID"]
+            DESCRIBE_v = trade_NO[ii]["DESCRIBE"]
+            CASE_ID_v = trade_NO[ii]["CASE_ID"]
+            Case_type_v = trade_NO[ii]["Case_type"]
+            ENV_v = trade_NO[ii]["ENV"]
+            area_name_v = trade_NO[ii]["area_name"]
+            url_gjj_v = trade_NO[ii]["url_gjj"]
+            login_type_v = trade_NO[ii]["login_type"]
+            areacode = trade_NO[ii]["areacode"]
+            corp_account_v = trade_NO[ii]["corp_account"]
+            corp_name_v = trade_NO[ii]["corp_name"]
+            try:
+                if Trade_no == '999':
+                    out = 1
+                    errorMsgs = trade_NO[ii]["errorMsgs"]
+                else:
+                    print("开始查询 %s 地区公积金....." % area_name_v)
+                    status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
+                    retry_times = 0
+                    try_times = 0
+                    if status["errorMsg"] == None:
+                        while status["data"]["phase"] != 'DONE':
+                            status = get_status(env, memberId_v, terminalId_v, Trade_no)[0]
+                            errorMsgs = ''
+                            try_times = try_times + 1
+                            #对返回错误类型为官网繁忙或者验证码错误的时候增加重试机制
+                            if '验证码' in status["data"]["description"] or '官网' in status["data"]["description"]  :
+                                print("验证码错误，正在重试")
+                                trade_no_h = task_create(env, member_id_v, terminal_id_v, key_pfx_v, key_password_v,
+                                                         '', '1',
+                                                         areacode, account_v, password_v, login_type_v,
+                                                         id_card_v, mobile_v, real_name_v,
+                                                         '',corp_account_v,corp_name_v, '2', '')
+                                trade_NO_re.append(
+                                    {"url_gjj": url_gjj_v, "rownum": rownum, "memberId": memberId_v,
+                                     "terminalId": terminalId_v,
+                                     "tradeno": trade_no_h[0], "ID": ID_v, "DESCRIBE": DESCRIBE_v, "CASE_ID": CASE_ID_v,
+                                     "Case_type": Case_type_v, "area_name": area_name_v, "env": env, "ENV": ENV_v,
+                                     "account": account_v, "password": password_v, "login_type": login_type_v,
+                                     'areacode': areacode,
+                                     "id_card": id_card_v, "mobile": mobile_v, "real_name": real_name_v,
+                                     "errorMsgs": trade_no_h[4],"corp_account":corp_account_v,"corp_name":corp_name_v})
+                                out = 2
+                                break
+                            elif status["errorCode"] != None:
+                                errorMsgs = str(status['errorMsg'])
+                                out = 1
+                                break
+                            elif status["data"]["phase_status"] == 'DONE_FAIL':
+                                try:
+                                    errorMsgs = str(status["data"]["description"])
+                                except:
+                                    pass
+                                out = 1
+                                break
+                            elif try_times > 40:
+                                print("任务超时")
+                                out = 1
+                                errorMsgs = "任务超时"
+                                break
+                    else:
+                        errorMsgs = str(status['errorMsg'])
+                        out = 1
+            except:
+                pass
+
+            if out == 0:
+                load_info = account_v + ',' + password_v + ',' + id_card_v + mobile_v + ',' + real_name_v
+                result = get_result(env, memberId_v, terminalId_v, Trade_no)[0]
+                bills_2014 = get_bills(env, memberId_v, terminalId_v, Trade_no, '2014', '1', '20')[0]
+                bills_2015 = get_bills(env, memberId_v, terminalId_v, Trade_no, '2015', '1', '20')[0]
+                bills_2016 = get_bills(env, memberId_v, terminalId_v, Trade_no, '2016', '1', '20')[0]
+                bills_2017 = get_bills(env, memberId_v, terminalId_v, Trade_no, '2017', '1', '20')[0]
+                bills_2018 = get_bills(env, memberId_v, terminalId_v, Trade_no, '2018', '1', '20')[0]
+                userinfo = get_user(env, memberId_v, terminalId_v, Trade_no)[0]
+                loaninfo = get_loan(env, memberId_v, terminalId_v, Trade_no)[0]
+                repayinfo = get_repay(env, memberId_v, terminalId_v, Trade_no)[0]
+                verify = 'Pass'
+                report(rownum, ID_v, DESCRIBE_v, CASE_ID_v, Case_type_v, '', ENV_v, area_name_v, Trade_no, result,
+                       bills_2014, bills_2015, bills_2016, bills_2017, bills_2018, userinfo, loaninfo, repayinfo, verify,
+                       0, '')
+                if result["errorCode"] == None:
+                    create_ownreport(area_name_v, ID_v, Trade_no, result, url_gjj_v, load_info,rownum)
+                else:
+                    pass
+                time.sleep(4)
+            elif out == 1:
+                verify = 'Fail'
+                report(rownum, ID_v, DESCRIBE_v, CASE_ID_v, Case_type_v, URI_NAME_v, ENV_v, area_name_v, Trade_no, '', '', '',
+                       '', '', '', '', '', '', verify, 0, errorMsgs)
             else:
                 pass
+            print('%s 地区公积金查询完毕，开始查询下一个地区......' % area_name_v)
+
+
+        return trade_NO_re
+
+    names = {'trade_NO_re' + str(iname): 'trade_NO_re' + str(iname) for iname in range(iterations) }
+    names['trade_NO_re0'] = []
+    get_results(trade_NO,names['trade_NO_re0'])
+    for tr in range(iterations):
+        names['trade_NO_re%s'%str(tr+1)] = []
+        if len(names['trade_NO_re%s'% str(tr)]) != 0:
+            time.sleep(sleep_time*2)
+            get_results(names['trade_NO_re%s'%str(tr)],names['trade_NO_re%s'%str(tr+1)])
         else:
-            verify = 'Fail'
-            report(rownum, ID_v, DESCRIBE_v, CASE_ID_v, Case_type_v, URI_NAME_v, ENV_v, area_name_v, Trade_no, '', '', '',
-                   '', '', '', '', '', '', verify, 0, errorMsgs)
-        print('%s 地区公积金查询完毕，开始查询下一个地区......' % area_name_v)
-        time.sleep(4)
+            break
+
 
     print("执行完毕.......")
     reports(data_sheet.nrows,rownum)
